@@ -603,6 +603,7 @@
                         else if ([currentPath isEqualToString:@"/rss/channel/item/pubDate"]) { if (processedText.length > 0) item.date = [NSDate dateFromInternetDateTimeString:processedText formatHint:DateFormatHintRFC822]; processed = YES; }
                         else if ([currentPath isEqualToString:@"/rss/channel/item/enclosure"]) { [self createEnclosureFromAttributes:currentElementAttributes andAddToItem:item]; processed = YES; }
                         else if ([currentPath isEqualToString:@"/rss/channel/item/dc:date"]) { if (processedText.length > 0) item.date = [NSDate dateFromInternetDateTimeString:processedText formatHint:DateFormatHintRFC3339]; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rss/channel/item/category"]) { [self createCategoryFromText:processedText andAddToItem:item]; processed = YES; }
                     }
                     
                     // Info
@@ -921,6 +922,22 @@
 		return NO;
 	}
 	
+}
+
+// Create an category NSDictionary from category (or link) attributes
+- (BOOL)createCategoryFromText:(NSString *)processedText andAddToItem:(MWFeedItem *)currentItem {
+    // Add to item
+    if (processedText) {
+        if (currentItem.categories) {
+            currentItem.categories = [currentItem.categories arrayByAddingObject:processedText];
+        } else {
+            currentItem.categories = [NSArray arrayWithObject:processedText];
+        }
+        return YES;
+    } else {
+        return NO;
+    }
+    
 }
 
 // Process ATOM link and determine whether to ignore it, add it as the link element or add as enclosure
