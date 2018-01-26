@@ -478,6 +478,12 @@
                 return;
             }
         }
+        
+        if (feedParseType != ParseTypeItemsOnly) {
+            if ((feedType == FeedTypeRSS && [currentPath isEqualToString:@"/rss/channel/item/media:content"])) {
+                [self createEnclosureFromAttributes:currentElementAttributes andAddToItem:item];
+            }
+        }
                 
         // Entering new item element
         if ((feedType == FeedTypeRSS  && [currentPath isEqualToString:@"/rss/channel/item"]) ||
@@ -881,6 +887,10 @@
 				// <enclosure>
 				encURL = [attributes objectForKey:@"url"];
 				encType = [attributes objectForKey:@"type"];
+                if (encType == nil) {
+                    encType = [attributes objectForKey:@"imageMimeTyp"];
+                }
+                
 				encLength = [NSNumber numberWithLongLong:[((NSString *)[attributes objectForKey:@"length"]) longLongValue]];
 				break;
 			}
